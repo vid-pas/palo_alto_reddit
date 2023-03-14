@@ -1,11 +1,15 @@
-import { StyleSheet} from "react-native";
+import { Dimensions } from "react-native";
+import { ScaledSheet  } from 'react-native-size-matters';
 
+const height = Dimensions.get("window").height;
+const width = Dimensions.get("window").width;
 
-export const styles = StyleSheet.create({
+export const styles = ScaledSheet.create({
     container: {
+        backgroundColor: "#000", 
+        height: height, 
         justifyContent: "center",
-        marginHorizontal: 50,
-        paddingHorizontal: 10,
+        width: width,
     },
     row: {
         flexDirection: "row",
