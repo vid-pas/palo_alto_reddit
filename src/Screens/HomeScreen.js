@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-web";
+import { FlatList, Text,TouchableOpacity, View } from "react-native";
+
+import Card from "../Components/Card";
 import Row from "../Components/Row";
 import { styles } from "../CSS/styles";
 
@@ -9,6 +10,8 @@ const HomeScreen = () => {
 
     const [data, setData] = useState();
     const [title, setTitle] = useState("");
+    const [startIndex, setStartIndex] = useState(0);
+    const [endIndex, setEndIndex] = useState(5);
 
     useEffect(() => {
 
@@ -28,40 +31,57 @@ const HomeScreen = () => {
         setData(response.data.children);
     };
 
+    const handleNext = () => {
+        setStartIndex(startIndex + 5);
+        setEndIndex(endIndex + 5);
+    };
+    const handlePrevious = () => {
+        setStartIndex(startIndex - 5);
+        setEndIndex(endIndex - 5);
+    };
+
+    // const renderItem = ({ item }) => {
+    //     return (
+    //       <View key={item.id} style={{ borderWidth: 1, borderColor: "#4D4f48", marginVertical: 10, padding: 10 }}>
+    //         <Row style={[styles.row, { justifyContent: "flex-start", marginBottom: 5 }]}>
+    //           <Text style={{ textAlign: "left" }}>{item.data.title}</Text>
+    //         </Row>
+    //         <Row style={[styles.row, { justifyContent: "space-between" }]}>
+    //           <Text>comment count here</Text>
+    //           <Text>{item.data.author}</Text>
+    //         </Row>
+    //       </View>
+    //     );
+    //   }
+
     return (
         <View style={styles.container}>
-            <Row style={[styles.row, { justifyContent: "center", marginVertical: 25, paddingHorizontal: 10}]}>
-                <Text style={{textAlign: "center"}}>{title}</Text>
+            <Row style={[styles.row, { justifyContent: "center", marginVertical: 25, paddingHorizontal: 10 }]}>
+                <Text style={{ textAlign: "center" }}>{title}</Text>
             </Row>
-            {data && data.map((post, i) => {
-                return <View style={{ borderWidth: 1, borderColor: "#4D4f48", marginVertical: 10, padding: 10}}>
-                    <Row style={[styles.row, { justifyContent: "flex-start", marginBottom: 5 }]}>
-                        <Text style={{textAlign: "left"}}>{post.data.title}</Text>
-                    </Row>
-                    <Row style={[styles.row, { justifyContent: "space-between"}]}>
-                        <Text>comment count here</Text>
-                        <Text>{post.data.author}</Text>
-                    </Row>
-                </View>
-            })}
-            <Row style={[styles.row, { justifyContent: "space-between"}]}>
+            <FlatList
+                data={data && data.slice(startIndex, endIndex)}
+                renderItem={(item) => <Card item={item}/>}
+                keyExtractor={item => item.data.id}
+            />
+            <Row style={[styles.row, { justifyContent: "space-between" }]}>
                 <TouchableOpacity
-                     accessibilityRole="button"
-                     disabled={false}
-                     onPress={console.log("previous")}
-                     style={{backgroundColor: "#000", paddingHorizontal: 15, paddingVertical: 5 }}
-                    >
-                    <Text style={{color: "#4D4f48"}}>
+                    accessibilityRole="button"
+                    disabled={startIndex === 0}
+                    onPress={handlePrevious}
+                    style={{ backgroundColor: "#000", paddingHorizontal: 15, paddingVertical: 5 }}
+                >
+                    <Text style={{ color: "#4D4f48" }}>
                         Previous
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                 accessibilityRole="button"
-                 disabled={false}
-                 onPress={console.log("next")}
-                 style={{backgroundColor: "#c9f646", paddingHorizontal: 15, paddingVertical: 5 }}
-                 >
-                    <Text style={{color: "#000"}}>
+                    accessibilityRole="button"
+                    disabled={data && endIndex >= data.length}
+                    onPress={handleNext}
+                    style={{ backgroundColor: "#c9f646", paddingHorizontal: 15, paddingVertical: 5 }}
+                >
+                    <Text style={{ color: "#000" }}>
                         Next
                     </Text>
                 </TouchableOpacity>
